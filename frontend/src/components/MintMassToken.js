@@ -2,7 +2,7 @@ import React from "react";
 
 import { NetworkErrorMessage } from "./NetworkErrorMessage";
 
-export function ConnectWallet({ connectWallet, networkError, dismiss }) {
+export function MintMassToken({ mintMassToken, networkError, dismiss }) {
   return (
     <div className="container">
       <div className="row justify-content-md-center">
@@ -16,13 +16,13 @@ export function ConnectWallet({ connectWallet, networkError, dismiss }) {
           )}
         </div>
         <div className="col-6 p-4 text-center">
-          <p>Please connect to your wallet.</p>
+          <p>Mint MASS Token.</p>
           <button
             className="btn btn-warning"
             type="button"
-            onClick={connectWallet}
+            onClick={mintMassToken}
           >
-            Connect Wallet
+            Forge Asset
           </button>
         </div>
       </div>

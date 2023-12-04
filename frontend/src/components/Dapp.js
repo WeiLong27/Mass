@@ -19,6 +19,7 @@ import { Transfer } from "./Transfer";
 import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 import { NoTokensMessage } from "./NoTokensMessage";
+import { MintMassToken } from "./MintMassToken";
 
 // This is the default id used by the Hardhat Network
 const HARDHAT_NETWORK_ID = '31337';
@@ -155,6 +156,11 @@ export class Dapp extends React.Component {
                 tokenSymbol={this.state.tokenData.symbol}
               />
             )}
+            <MintMassToken 
+              mintMassToken={() => this._mintTokens()} 
+              networkError={this.state.networkError}
+              dismiss={() => this._dismissNetworkError()}
+            />
           </div>
         </div>
       </div>
@@ -336,6 +342,41 @@ export class Dapp extends React.Component {
       this.setState({ txBeingSent: undefined });
     }
   }
+
+  async _mintTokens() {
+    try {
+      console.log("try mintTokens");
+      // Assuming mint function in your contract takes an amount parameter
+      const amount = 55000;
+      const userAddress = this.state.selectedAddress;
+
+      // Call the mint function from the contract
+      const tx = await this._token.mint(userAddress, amount);
+      this.setState({ txBeingSent: tx.hash });
+
+      // Wait for the transaction to be mined
+      const receipt = await tx.wait();
+
+      if (receipt.status === 0) {
+        console.log("Minting transaction failed");
+        throw new Error("Minting transaction failed");
+      }
+
+      // Update balance after minting
+      await this._updateBalance();
+    } catch (error) {
+      console.log("caught error mint tokens");
+      if (error.code === ERROR_CODE_TX_REJECTED_BY_USER) {
+        return;
+      }
+      console.error(error);
+      this.setState({ transactionError: error });
+    } finally {
+      this.setState({ txBeingSent: undefined });
+    }
+  }
+
+
 
   // This method just clears part of the state.
   _dismissTransactionError() {

@@ -9,7 +9,6 @@ describe("MassToken contract", function() {
   let addr1;
   let addr2;
   let tokenCap = 100000000;
-  let tokenBlockReward = 50;
 
   beforeEach(async function () {
     // Get the ContractFactory and Signers here.
@@ -83,6 +82,23 @@ describe("MassToken contract", function() {
       const addr2Balance = await massToken.balanceOf(addr2.address);
       expect(addr2Balance).to.equal(50);
     });
+  });
+
+  describe("Minting", function () {
+
+    it("Should mint the correct amount of tokens", async function () {
+      const oldTotalSupply = await massToken.totalSupply();
+      const addedAmount = 10000;
+
+      await massToken.mint(addr1.address, 10000);
+      expect(await massToken.totalSupply()).to.equal(oldTotalSupply + BigInt(addedAmount));
+    });
+
+    it("Should assign the total supply of tokens to the owner", async function () {
+      const ownerBalance = await massToken.balanceOf(owner.address);
+      expect(await massToken.totalSupply()).to.equal(ownerBalance);
+    });
+
   });
   
 });
